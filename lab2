@@ -1,0 +1,107 @@
+#include<iostream>
+#include<string>
+
+using namespace std;
+
+
+
+
+
+
+
+class olympiad {
+private:
+	static size_t counter;
+	size_t id;
+	string name;
+	float place;
+	void CheckValue();
+
+public:
+	olympiad();
+	olympiad(string, int);
+	~olympiad();
+
+	friend void Output(const olympiad&);
+	friend class referee;
+};
+
+class referee {
+public:
+	void setPlace(olympiad&, int);
+};
+
+void Output(const olympiad&);
+size_t olympiad::counter = 1;
+
+
+int main() {
+	referee referee;
+	
+
+	olympiad o;
+	olympiad a("foforkin a.k", 2);
+	
+	Output(o);
+	Output(a);
+
+	referee.setPlace(o, 1);
+	referee.setPlace(a, 3);
+
+	Output(o);
+	Output(a);
+
+	olympiad system_unit[3]{
+		olympiad("rorokin f.k.", 4),
+		olympiad("lolokin r.k", -2),
+		olympiad("Momonov l.g.", 5)
+	};
+
+	for (size_t i = 0; i < 3; i++) {
+		Output(system_unit[i]);
+	}
+
+	referee.setPlace(system_unit[0], 5);
+	referee.setPlace(system_unit[1], 3);
+	referee.setPlace(system_unit[2], 2);
+
+	for (size_t i = 0; i < 3; i++) {
+		Output(system_unit[i]);
+	}
+	return 0;
+}
+
+
+void olympiad::CheckValue() {
+	if (place < 0) {
+		place *= -1;
+	}
+}
+
+olympiad::olympiad() {
+	name = "k.G.K";
+	place = 0;
+	id = counter++;
+}
+
+olympiad::olympiad(string name, int mass) {
+	this->name = name;
+	this->place = mass;
+	CheckValue();
+	id = counter++;
+}
+
+olympiad::~olympiad() {
+
+}
+
+void referee::setPlace(olympiad& temp, int newplace) {
+	temp.place = newplace;
+}
+
+void Output(const olympiad& temp) {
+	cout << "olympiad ID: " << temp.id << endl;
+	cout << "olympiad name: " << temp.name << endl;
+	cout << "olympiad place: " << temp.place << endl;
+	cout << "3.14159265358979323846..." << endl << endl;
+}
