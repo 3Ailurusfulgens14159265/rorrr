@@ -1,1 +1,175 @@
-# rorrr
+#include <iostream>
+#include <windows.h>
+
+using namespace std;
+
+class Cartoon
+{
+public:
+	Cartoon(string name, int year) {
+		this->name = name;
+		this->year = year;
+	}
+
+	Cartoon() {
+		year = 2000;
+		name = "default";
+	}
+
+	virtual void PrintInfo() = 0;
+	virtual int GetYear() = 0;
+	virtual ~Cartoon() { }
+
+protected:
+	string name;
+	int year;
+};
+
+class fullLengthCartoon : public Cartoon
+{
+public:
+	fullLengthCartoon(string name, int year, int countOfHero, float length) : Cartoon(name, year)
+	{
+		this->length = length;
+		this->countOfHero = countOfHero;
+	}
+
+	void PrintInfo() override{
+		cout << "Name: " << name << endl;
+		cout << "Year: " << year << endl;
+		cout << "Length: " << length << endl;
+		cout << "Number of hero: " << countOfHero << endl;
+	}
+
+	int GetYear() override {
+		return year;
+	}
+
+	~fullLengthCartoon() {}
+
+protected:
+	float length;
+	int countOfHero;
+};
+
+class Serial : public fullLengthCartoon
+{
+public:
+	Serial(string name, int year, int countOfHero, float length, string author, float seriesNum) : fullLengthCartoon(name, year, countOfHero, length)
+	{
+		this->author = author;
+		this->seriesNum = seriesNum;
+	}
+
+	void PrintInfo() override{
+		cout << "Name: " << name << endl;
+		cout << "Year: " << year << endl;
+		cout << "Length: " << length << endl;
+		cout << "Number of hero: " << countOfHero << endl;
+		cout << "Author: " << author << endl;
+		cout << "Number of series: " << seriesNum << endl;
+	}
+
+	int GetYear() override {
+		return year;
+	}
+
+	~Serial() {
+
+	}
+
+protected:
+	string author;
+	float seriesNum;
+};
+
+class CartoonAboutAnimals : public Cartoon
+{
+public:
+	CartoonAboutAnimals(string name, int year, float price, int countOfAnimals) : Cartoon(name, year)
+	{
+		this->price = price;
+		this->countOfAnimals = countOfAnimals;
+	}
+
+	void PrintInfo() override{
+		cout << "Name: " << name << endl;
+		cout << "Year: " << year << endl;
+		cout << "Price: " << price << endl;
+		cout << "Number of animals: " << countOfAnimals << endl;
+	}
+
+	int GetYear() override {
+		return year;
+	}
+
+	~CartoonAboutAnimals() {}
+
+protected:
+	float price;
+	int countOfAnimals;
+};
+
+int GetValidInt(string);
+float GetValidFloat(string);
+
+int main() {
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+
+	int count = 3;
+	Cartoon** cartoons = new Cartoon* [count];
+	cartoons[0] = new fullLengthCartoon("Tarzan", 2002, 2, 2.30);
+	cartoons[1] = new Serial("Hentai", 2000, 13, 23.4, "kadzima", 5);
+	cartoons[2] = new CartoonAboutAnimals("Lion the king", 2000, 30, 3);
+
+	for (int i = 0; i < count; i++) {
+		cout << "Info about character" << endl;
+		cartoons[i]->PrintInfo();
+		cout << "Year of creating: " << cartoons[i]->GetYear() << endl;
+		cout << "_____________________" << endl << endl;
+	}
+
+	for (int i = 0; i < count; i++) {
+		delete cartoons[i];
+	}
+	delete[] cartoons;
+		
+	return 0;
+}
+
+int GetValidInt(string title) {
+	int temp;
+	cout << title << ": ";
+
+	while (true) {
+		cin >> temp;
+		if (cin.fail() || temp < 0) {
+			cin.clear();
+			cin.ignore(32767, '\n');
+			cout << title << ": ";
+		}
+		else {
+			cin.ignore(32767, '\n');
+			return temp;
+		}
+	}
+};
+
+float GetValidFloat(string title) {
+	float temp;
+	cout << title << ": ";
+
+	while (true) {
+		cin >> temp;
+		if (cin.fail() || temp < 0) {
+			cin.clear();
+			cin.ignore(32767, '\n');
+			cout << title << ": ";
+		}
+		else {
+			cin.ignore(32767, '\n');
+			return temp;
+		}
+	}
+};
