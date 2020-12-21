@@ -1,1 +1,210 @@
-# rorrr
+#include <iostream>
+
+class Row {
+public:
+    Row(double* row) {
+        rowPtr = row;
+    }
+
+    double& operator[] (const int index) {
+        return rowPtr[index];
+    }
+
+private:
+    double* rowPtr;
+};
+
+class Matrix {
+public:
+    Matrix() {
+        col = row = 0;
+        matrix = nullptr;
+    }
+
+    Matrix(int row, int col) {
+        this->col = col;
+        this->row = row;
+        matrix = new double* [row];
+        for (int i = 0; i < row; i++) {
+            matrix[i] = new double[col] {0};
+        }
+    }
+
+    Matrix(const Matrix& other) {
+        this->col = other.col;
+        this->row = other.row;
+        this->matrix = new double* [this->row];
+        for (int i = 0; i < this->row; i++) {
+            this->matrix[i] = new double[this->col];
+        }
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                this->matrix[i][j] = other.matrix[i][j];
+            }
+        }
+    }
+
+    ~Matrix() {
+        for (int i = 0; i < row; i++) {
+            delete[] matrix[i];
+        }
+        delete[] matrix;
+    }
+
+    Matrix& operator++() {
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                ++matrix[i][j];
+            }
+        }
+        return *this;
+    }
+
+
+    Matrix& operator++(int) {
+        Matrix temp(*this);
+        ++(*this);
+        return temp;
+    }
+
+    Matrix operator+(const int num) {
+        Matrix out(this->row, this->col);
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                out[i][j] = this->matrix[i][j] + num;
+            }
+        }
+        return out;
+    }
+
+    Matrix operator-(const int num) {
+        Matrix out(this->row, this->col);
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                out[i][j] = this->matrix[i][j] - num;
+            }
+        }
+        return out;
+    }
+
+    Matrix operator+(const double num) {
+        Matrix out(this->row, this->col);
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                out[i][j] = this->matrix[i][j] + num;
+            }
+        }
+        return out;
+    }
+
+    Matrix operator-(const double num) {
+        Matrix out(this->row, this->col);
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                out[i][j] = this->matrix[i][j] - num;
+            }
+        }
+        return out;
+    }
+
+    Row operator[](int index) {
+        Row temp(matrix[index]);
+        return temp;
+    }
+
+    Matrix& operator= (const Matrix& other) {
+        if (this->matrix != nullptr) {
+            for (int i = 0; i < row; i++) {
+                delete[] matrix[i];
+            }
+            delete[] matrix;
+        }
+
+        this->col = other.col;
+        this->row = other.row;
+        this->matrix = new double* [this->row];
+
+        for (int i = 0; i < this->row; i++) {
+            this->matrix[i] = new double[col] {0};
+        }
+
+        for (int i = 0; i < this->row; i++) {
+            for (int j = 0; j < this->col; j++) {
+                this->matrix[i][j] = other.matrix[i][j];
+            }
+        }
+        return *this;
+    }
+
+    void Print() {
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                std::cout << matrix[i][j] << "; ";
+            }
+            std::cout << std::endl;
+        }
+    }
+
+    int GetCol() {
+        return col;
+    }
+
+    int GetRow() {
+        return row;
+    }
+
+private:
+    int row, col;
+    double** matrix;
+};
+
+int main(){
+    std::cout << "8 pupkt: " << std::endl;
+    Matrix a(3, 4), b(a);
+    a = a + 12.23;
+    a[2][3] = 2;
+    a.Print();
+    std::cout << std::endl;
+    b++;
+    b.Print();
+    std::cout << std::endl;
+
+    std::cout << "9 pupkt: " << std::endl;
+    Matrix* m = new Matrix(4, 4);
+    for (int i = 0; i < m->GetRow(); i++) {
+        for (int j = 0; j < m->GetCol(); j++) {
+            (*m)[i][j] = rand() % 20;
+        }
+    }
+    Matrix* n = new Matrix(*m);
+
+    m->Print();
+    std::cout << std::endl;
+    n->Print();
+    delete m, n;
+    std::cout << std::endl;
+
+    std::cout << "10 pupkt: " << std::endl;
+    int size = 3;
+    Matrix* arr = new Matrix[size]{
+        Matrix(2, 2),
+        Matrix(3, 3),
+        Matrix(4, 4)
+    };
+
+    for (int k = 0; k < size; k++) {
+        for (int i = 0; i < arr[k].GetRow(); i++) {
+            for (int j = 0; j < arr[k].GetCol(); j++) {
+                arr[k][i][j] = rand() % 50;
+            }
+        }
+    }
+
+    for (int k = 0; k < size; k++) {
+        arr[k].Print();
+        std::cout << std::endl;
+    }
+
+    delete[] arr;
+}
+
