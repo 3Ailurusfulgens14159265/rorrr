@@ -1,3 +1,125 @@
+#pragma once
+#include <iostream>
+#include <string>
+#include <locale.h>
+#include <algorithm> 
+#include<vector>
+#include<iterator>
+#include <fstream>
+#include <list>
+using namespace std;
+class Cartoon
+{
+public:
+	Cartoon(string name, int year) {
+		this->name = name;
+		this->year = year;
+	}
+
+	Cartoon() {
+		year = 2000;
+		name = "default";
+	}
+	int getYear()
+	{
+		return this->year;
+	}
+
+public:
+	string name;
+	int year;
+};
+class ExceptionStack
+{
+public:
+	ExceptionStack(std::string error)
+	{
+		m_exception = error;
+	}
+	const char* getError()
+	{
+
+		return m_exception.c_str();
+	}
+
+private:
+	std::string m_exception;
+};
+
+bool operator<(const Cartoon& a, const Cartoon& b)
+{
+	return (a.year < b.year);
+}
+
+bool operator==(const Cartoon& a, const Cartoon& b)
+{
+	return a.year == b.year ;
+}
+
+class Functions
+{
+public:
+	Functions();
+	static void func3(std::vector<Cartoon>::iterator begin, std::vector<Cartoon>::iterator end, vector<Cartoon>& p)
+	{
+		
+		
+		//оператор проверки на равенство для unique
+		
+		sort(p.begin(), p.end());
+		p.resize(unique(p.begin(), p.end()) - p.begin());
+			
+	}
+	static int func2(std::vector<Cartoon>::const_iterator begin, std::vector<Cartoon>::const_iterator end,int year)
+	{
+		
+		end++;
+		int count = 0;
+		for (; begin != end; begin++)
+		{
+			if ((*begin).year==year)
+			{
+				return count;
+			}
+			count++;
+		}
+		return -1;
+
+	}
+
+	static void func1(list<string>& L)
+	{
+
+		ifstream fin;
+		ofstream fout;
+		fin.open("filein.txt");
+		fout.open("fileout.txt");
+		try
+		{
+
+			if (!fin.is_open())
+			{
+				throw ExceptionStack("Can`t open file\n");
+			}
+		}
+		catch (ExceptionStack exception)
+		{
+			cerr << exception.getError();
+		}
+		string buf;
+
+		while (getline(fin, buf))
+		{
+			buf += "1";
+			L.push_back(buf);
+			fout << buf << '\n';
+		}
+
+
+	}
+
+};
+
 #include "Header.h"
 void menu()
 {
