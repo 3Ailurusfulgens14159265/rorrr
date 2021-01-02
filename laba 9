@@ -1,1 +1,129 @@
-# rorrr
+#include "Header.h"
+void menu()
+{
+	using namespace std;
+	cout << " что желаете: 1-push 2-Search 3-popValue 4-print  5-linked list 0-выход";
+
+}
+int main()
+{
+	setlocale(LC_ALL, "Russian");
+	vector<Cartoon> myStack;
+	int x;
+	while (1)
+	{
+		menu();
+		try
+		{
+			cin >> x;
+			if (x < 0 || x>6)
+				throw ExceptionStack("Invalid x,input correct x\n");
+		}
+		catch (ExceptionStack exception)
+		{
+			cerr << exception.getError();
+		}
+
+		if (x == 1)
+		{
+			cout << "Введите year и name:";
+			int year;
+			string name;
+			try
+			{
+				cin >> year >> name;
+				if (year < 1700)
+				{
+					throw ExceptionStack("Invalid id,input correct id\n");
+				}
+			}
+			catch (ExceptionStack exception)
+			{
+				cerr << exception.getError();
+			}
+			Cartoon cart = { name,year };
+			myStack.push_back(cart);
+
+		}
+		if (x == 2)
+		{
+			cout << "Введите год для поиска дубликата";
+			int vvod;
+			string stroka;
+			try
+			{
+				cin >> vvod;
+				auto it1 = myStack.begin();
+				auto it2 = myStack.end();
+				it2--;
+				vvod = Functions::func2(it1, it2, vvod);
+				if (vvod == -1)
+				{
+					cout << "Данный год не имеет дубликатов";
+				}
+				else
+				{
+					cout << "Данный год имеет дубликат на " << vvod << " позиции";
+				}
+
+
+			}
+			catch (ExceptionStack exception)
+			{
+				cerr << exception.getError();
+			}
+
+		}
+		if (x == 3)
+		{
+
+			auto it1 = myStack.begin();
+			auto it2 = myStack.end();
+
+			try
+			{
+				Functions::func3(it1, it2,myStack);
+
+			}
+			catch (ExceptionStack exception)
+			{
+				cerr << exception.getError();
+			}
+		}
+		if (x == 4)
+		{
+
+			try
+			{
+				vector<Cartoon>::const_iterator it = myStack.begin();
+
+				while (it != myStack.end())
+				{
+					cout << it->year << " " << it->name << endl;
+					++it;
+				}
+
+			}
+			catch (ExceptionStack exception)
+			{
+				cerr << exception.getError();
+			}
+		}
+		if (x == 5)
+		{
+			list<string> L;
+			Functions::func1(L);
+			auto it = L.begin();
+			while (it != L.end())
+			{
+				cout << *it << endl;
+				it++;
+			}
+		}
+		if (x == 0)
+		{
+			break;
+		}
+	}
+
+}
