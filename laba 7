@@ -1,0 +1,648 @@
+#include <iostream>
+#include <exception>
+#include <locale.h>
+#pragma once
+
+using namespace std;
+
+class Olimp
+{
+private:
+	//static int i;
+	int _id;
+	string _name;
+	double _rate;
+public:
+	int i;
+	~Olimp() = default;
+
+	Olimp() : _name("..."), _id(setId()), _rate(0.0) {}
+
+	Olimp(string n) : _name(n), _id(setId()), _rate(0.0) {}
+
+	Olimp(string n, double r) : _name(n), _id(setId()), _rate(r) {}
+	
+	void outputData()
+	{
+		cout << "Olimp " << this->_id << " - " << this->_name << " - " << "Rate " << this->_rate << " " << endl;
+	}
+
+	int setId() {
+	int a = rand() % 100;
+	return a;
+	}
+
+	void SetInfo(string n, double r)
+	{
+		this->_name = n;
+		this->_rate = r;
+	}
+
+	double getResult() {
+		return this->_rate;
+	}
+
+	friend bool operator<(Olimp T1, Olimp T2);
+	friend bool operator==(Olimp T1, Olimp T2);
+	friend bool operator>(Olimp T1, Olimp T2);
+	friend ostream& operator<<(ostream& out, const Olimp it);
+	friend int getId(Olimp& t);
+
+};
+
+int getId(Olimp & t)
+	{
+		return t._id;
+	}
+
+ostream& operator<<(ostream& out, const Olimp it)
+{
+	out << "Olimp " << it._id << " - " << it._name << " - " << "Rate " << it._rate << "" << endl;
+	return out;
+}
+
+bool operator<(Olimp T1, Olimp T2) {
+	if (T1.getResult() < T2.getResult()) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool operator>(Olimp T1, Olimp T2) {
+	if (T1.getResult() > T2.getResult()) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool operator==(Olimp T1, Olimp T2) {
+	if (T1.getResult() == T2.getResult()) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+
+class Exception
+{
+protected:
+	int _error;
+public:
+	Exception()
+	{
+		_error = 0;
+	}
+	Exception(int error)
+	{
+		_error = error;
+	}
+	~Exception() {};
+	void PrintError()
+	{
+		if (this->_error == 1)
+		{
+			cout << "ERROR, ONLY INT" << endl;
+		}
+		if (this->_error == 2)
+		{
+			cout << "ERROR, ONLY DOUBLE" << endl;
+		}
+		if (this->_error == 3)
+		{
+			cout << "ERROR, EMPTY RING" << endl;
+		}
+	}
+};
+
+template <typename T>
+class  Node
+{
+public:
+	T _data;
+	Node* _next;
+	Node() : _data(), _next(nullptr) {}
+	Node(T value) : _data(value), _next(nullptr) {}
+};
+
+template <typename T>
+class Ring : public Node<T>
+{
+private:
+	Node<T>* _head;
+	int _size;
+public:
+	Ring() : _head(nullptr), _size(0) {};
+	void dataInput(T value) {
+		if (_head == nullptr) {
+			Node<T>* element = new Node<T>(value);
+			_head = new Node<T>(value);
+			element->_next = _head;
+			_head = element;
+			_size++;
+		}
+		else {
+			Node<T>* it = this->_head;
+			int i = 0;
+			while (i < _size - 1) {
+				it = it->_next;
+				i++;
+			}
+			it->_next = new Node<T>(value);
+			it->_next->_next = _head;
+			_size++;
+		}
+	}
+	void show() {
+		try {
+			if (_size == 0)
+			{
+				throw 3;
+			}
+		}
+		catch (int i)
+		{
+			Exception ex(i);
+			ex.PrintError();
+			return;
+		}
+		Node<T>* it = _head;
+		int i = 0;
+		while (i < _size) {
+			cout << ' ' << it->_data;
+			it = it->_next;
+			i++;
+		}
+		cout << endl;
+	}
+	Node<T>* getNode() {
+		return this->_head;
+	}
+	void deleting()
+	{
+		try {
+			if (_size == 0)
+			{
+				throw 3;
+			}
+		}
+		catch (int i)
+		{
+			Exception ex(i);
+			ex.PrintError();
+			return;
+		}
+		Node<T>* temp = _head;
+		_head = _head->_next;
+		delete temp;
+		_size--;
+		Node<T>* it = _head;
+		int i = 0;
+		while (i < _size - 1) {
+			it = it->_next;
+			i++;
+		}
+		it->_next = _head;
+	}
+	int getSize() {
+		return _size;
+	}
+
+	friend ostream& operator<<(ostream& out, const Node<T>& _node);
+};
+
+template <typename T>
+class Iterator
+{
+private:
+	Node<T>* _node;
+	int _size;
+	int _curr;
+public:
+	friend Ring<T>;
+	~Iterator() { }
+	Iterator(Ring<T>* data) {
+		this->_node = data->getNode();
+		this->_size = data->getSize();
+		_curr = 0;
+	}
+	void begin() {
+		try {
+			if (_size == 0)
+			{
+				throw 3;
+			}
+		}
+		catch (int i)
+		{
+			Exception ex(i);
+			ex.PrintError();
+			return;
+		}
+		if (_curr == 0) {
+			return;
+		}
+		else {
+			while (_curr < _size) {
+				_curr++;
+				_node = _node->_next;
+			}
+			_curr = 0;
+		}
+		return;
+	}
+	Iterator& operator++() {
+		try {
+			if (_size == 0)
+			{
+				throw 3;
+			}
+		}
+		catch (int i)
+		{
+			Exception ex(i);
+			ex.PrintError();
+		}
+		if (_curr = _size - 1) {
+			_curr = 0;
+		}
+		else {
+			_curr--;
+		}
+		_node = _node->_next;
+		return *this;
+	}
+	T operator*() {
+		return _node->_data;
+	}
+	Iterator& operator[](const int index)
+	{
+		try {
+			if (_size == 0)
+			{
+				throw 3;
+			}
+		}
+		catch (int i)
+		{
+			Exception ex(i);
+			ex.PrintError();
+		}
+		Node<T>* it = this->_node;
+		while (1)
+		{
+			if (_curr == index)
+			{
+				this->_node = it;
+				return *this;
+			}
+			it = it->_next;
+			if (_curr == _size - 1) {
+				_curr = 0;
+			}
+			else {
+				_curr++;
+			}
+		}
+	}
+	void operator = (T elem) {
+		try {
+			if (_size == 0)
+			{
+				throw 3;
+			}
+		}
+		catch (int i)
+		{
+			Exception ex(i);
+			ex.PrintError();
+			return;
+		}
+		this->_node->_data = elem;
+		return;
+	}
+	void operator= (Ring<T> r) {
+
+		_node = r.getNode();
+		_size = r.getSize();
+		_curr = 0;
+	}
+	void searchData(T _data) {
+		try {
+			if (_size == 0)
+			{
+				throw 3;
+			}
+		}
+		catch (int i)
+		{
+			Exception ex(i);
+			ex.PrintError();
+			return;
+		}
+		int i = 0;
+		while (i < _size)
+		{
+			if (_data == _node->_data)
+			{
+				cout << "data " << _data << " Найдено" << endl;
+				return;
+			}
+			_node = _node->_next;
+			if (_curr = _size - 1) {
+				_curr = 0;
+			}
+			else {
+				_curr++;
+			}
+			i++;
+		}
+		cout << "data " << _data << " Не найдено " << endl;
+	}
+	void shellSort() {
+		try {
+			if (_size == 0)
+			{
+				throw 3;
+			}
+		}
+		catch (int i)
+		{
+			Exception ex(i);
+			ex.PrintError();
+			return;
+		}
+		int step, i, j;
+		T temp;
+		for (step = this->_size / 2; step > 0; step /= 2) {
+			for (i = step; i < this->_size; i++) {
+				for (j = i - step; j >= 0 && (*this)[j]._node->_data < (*this)[j + step]._node->_data; j -= step) {
+					temp = (*this)[j]._node->_data;
+					(*this)[j]._node->_data = (*this)[j + step]._node->_data;
+					(*this)[j + step]._node->_data = temp;
+				}
+			}
+		}
+	}
+
+	friend ostream& operator<<(ostream& out, const Iterator<T>& it);
+};
+
+
+template<typename T>
+ostream& operator<<(ostream& out, const Node<T>& _node)
+{
+	out << _node->_data;
+	return out;
+}
+
+template<typename T>
+ostream& operator<<(ostream& out, const Iterator<T>& it)
+{
+	out << *it;
+	return out;
+}
+
+template<typename T>
+T RandNum() {
+	T b = rand() % 100;
+	b = b / 1.01;
+	return b;
+}
+
+
+int main()
+{
+	setlocale(LC_ALL, "Russian");
+
+	Ring<int> r1;
+	Ring<double> r2;
+	Ring<char> r3;
+	Ring<Olimp> r4;
+
+	cout << "Вставим рандомные числа с типом int:" << endl;
+
+	r1.dataInput(RandNum<int>());
+	r1.dataInput(RandNum<int>());
+	r1.dataInput(RandNum<int>());
+	r1.dataInput(RandNum<int>());
+	r1.dataInput(RandNum<int>());
+	r1.dataInput(RandNum<int>());
+	r1.dataInput(RandNum<int>());
+
+	Iterator<int> I1(&r1);
+
+	I1.begin();
+	for (int i = 0; i < r1.getSize(); i++) {
+		cout << " " << *I1;
+		++I1;
+	}
+
+	cout << endl;
+
+	r1.deleting();
+
+	r1.deleting();
+	I1 = r1;
+
+	I1.begin();
+
+	for (int i = 0; i < r1.getSize(); i++) {
+		cout << " " << *I1;
+		++I1;
+	}
+	cout << endl;
+
+	I1.begin();
+
+	cout << "ShellSort" << endl;
+
+	I1.shellSort();
+
+	I1.begin();
+	for (int i = 0; i < r1.getSize(); i++) {
+		cout << " " << *I1;
+		++I1;
+	}
+
+	cout << endl;
+
+	I1.begin();
+
+	I1.searchData(RandNum<int>());
+
+	cout << endl;
+
+	cout << "Вставим рандомные числа с типом double:" << endl;
+
+	r2.dataInput(RandNum<double>());
+	r2.dataInput(RandNum<double>());
+	r2.dataInput(RandNum<double>());
+	r2.dataInput(RandNum<double>());
+	r2.dataInput(RandNum<double>());
+	r2.dataInput(RandNum<double>());
+	r2.dataInput(RandNum<double>());
+
+	Iterator<double> I2(&r2);
+	I2.begin();
+	for (int i = 0; i < r2.getSize(); i++) {
+		cout << " " << *I2;
+		++I2;
+	}
+	cout << endl;
+
+	r2.deleting();
+
+	r2.deleting();
+
+	I2 = r2;
+
+	I2.begin();
+	for (int i = 0; i < r2.getSize(); i++) {
+		cout << " " << *I2;
+		++I2;
+	}
+	cout << endl;
+
+	I2.begin();
+
+	cout << "ShellSort" << endl;
+
+	I2.shellSort();
+
+	I2.begin();
+
+	for (int i = 0; i < r2.getSize(); i++) {
+		cout << " " << *I2;
+		++I2;
+	}
+	cout << endl;
+
+	I2.begin();
+
+	I2.searchData(RandNum<double>());
+
+	cout << endl;
+
+	cout << "Вставим рандомные символы с типом char:" << endl;
+
+	r3.dataInput('f');
+	r3.dataInput('u');
+	r3.dataInput('r');
+	r3.dataInput('a');
+	r3.dataInput('y');
+	r3.dataInput('z');
+	r3.dataInput('o');
+
+	Iterator<char> I3(&r3);
+
+	I3.begin();
+	for (int i = 0; i < r3.getSize(); i++) {
+		cout << " " << *I3;
+		++I3;
+	}
+	cout << endl;
+
+	r3.deleting();
+
+	r3.deleting();
+
+	I3 = r3;
+
+	I3.begin();
+
+	for (int i = 0; i < r3.getSize(); i++) {
+		cout << " " << *I3;
+		++I3;
+	}
+	cout << endl;
+
+	I3.begin();
+
+	cout << "ShellSort" << endl;
+
+	I3.shellSort();
+
+	I3.begin();
+
+	for (int i = 0; i < r3.getSize(); i++) {
+		cout << " " << *I3;
+		++I3;
+	}
+	cout << endl;
+
+	I3.begin();
+
+	I3.searchData('z');
+
+	cout << endl;
+
+	cout << "Создали объекты:" << endl;
+
+	Olimp t1("Vladimir", 53.41);
+	Olimp t2("Vlad", 23.23);
+	Olimp t3("Jenya", 68.09);
+	Olimp t4("Pasha", 89.04);
+	Olimp t5("Horsh", 11.47);
+	Olimp t6("Sanya", 7.46);
+	Olimp t7("Kesha", 33.67);
+
+	r4.dataInput(t1);
+	r4.dataInput(t2);
+	r4.dataInput(t3);
+	r4.dataInput(t4);
+	r4.dataInput(t5);
+	r4.dataInput(t6);
+	r4.dataInput(t7);
+
+	Iterator<Olimp> I4(&r4);
+
+	I4.begin();
+
+	for (int i = 0; i < r4.getSize(); i++) {
+		cout << " " << *I4;
+		++I4;
+	}
+	cout << endl;
+
+	r4.deleting();
+
+	r4.deleting();
+
+	I4 = r4;
+
+	I4.begin();
+
+	for (int i = 0; i < r4.getSize(); i++) {
+		cout << " " << *I4;
+		++I4;
+	}
+	cout << endl;
+
+	I4.begin();
+
+	cout << "ShellSort" << endl;
+
+	I4.shellSort();
+
+	I4.begin();
+
+	for (int i = 0; i < r4.getSize(); i++) {
+		cout << " " << *I4;
+		++I4;
+	}
+	cout << endl;
+
+	I4.begin();
+
+	I4.searchData(t2);
+
+	cout << endl;
+
+	return 0;
+}
