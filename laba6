@@ -1,234 +1,146 @@
 #include <iostream>
-#include <windows.h>
+#include <vector>
 
-using namespace std;
-
-class Cartoon
-{
+template <class T>
+class Uravnenie {
 public:
-	Cartoon(string name, int year) {
-		this->name = name;
-		this->year = year;
-	}
+    void Add(T a = 0, T b = 0, T c = 0) {
+        dataA.push_back(a);
+        dataB.push_back(b);
+        dataC.push_back(c);
+        counter++;
+    }
 
-	Cartoon() {
-		year = 2000;
-		name = "default";
-	}
+    void Del(T a, T b, T c) {
+        for (int i = 0; i < counter; i++) {
+            if (dataA[i] == a && dataB[i] == b && dataC[i] == c) {
+                dataA.erase(dataA.begin() + i);
+                dataB.erase(dataB.begin() + i);
+                dataC.erase(dataC.begin() + i);
+                counter--;
+                return;
+            }
+        }
+        std::cout << "Net takogo uravnenniya" << std::endl;
+    }
 
-	void PrintInfoCartoon() {
-		cout << "Name: " << name << endl;
-		cout << "Year: " << year << endl;
-	}
+    void Reshenie() {
+        double D, x1, x2;
+        T a, b, c;
+        std::cout << "Resheniya: " << std::endl;
+        for (int i = 0; i < counter; i++) {
+            std::cout << dataA[i] << " * x^2 + " << dataB[i] << " * x + " << dataC[i] << " = 0" << std::endl;
+            a = dataA[i];
+            b = dataB[i];
+            c = dataC[i];
 
-	~Cartoon() {
+            D = b * b - 4 * a * c;
+            if (D < 0) {
+                std::cout << "korney net" << std::endl;
+            }
+            else {
+                x1 = (-b - sqrt(D)) / (2 * a);
+                x2 = (-b + sqrt(D)) / (2 * a);
+                std::cout << "x1 = " << x1 << "; x2 = " << x2 << ";" << std::endl;
+            }
+        }
+        
+    }
 
-	}
-
-protected:
-	string name;
-	int year;
-};
-
-class fullLengthCartoon : protected virtual Cartoon
-{
-public:
-	fullLengthCartoon(string name, int year, int countOfHero, float length) : Cartoon(name, year)
-	{
-		this->length = length;
-		this->countOfHero = countOfHero;
-	}
-
-	void PrintInfoFLCartoon() {
-		PrintInfoCartoon();
-		cout << "Length: " << length << endl;
-		cout << "Number of hero: " << countOfHero << endl;
-	}
-
-	~fullLengthCartoon() {
-
-	}
-
-protected:
-	float length;
-	int countOfHero;
-};
-
-class Serial : protected fullLengthCartoon
-{
-public:
-	Serial(string name, int year, int countOfHero, float length, string author, float seriesNum) : fullLengthCartoon(name, year, countOfHero, length)
-	{
-		this->author = author;
-		this->seriesNum = seriesNum;
-	}
-
-	void PrintInfoSerial() {
-		PrintInfoFLCartoon();
-		cout << "Author: " << author << endl;
-		cout << "Number of series: " << seriesNum << endl;
-	}
-
-	~Serial() {
-
-	}
-
-protected:
-	string author;
-	float seriesNum;
-};
-
-class CartoonAboutAnimals : protected virtual Cartoon
-{
-public:
-	CartoonAboutAnimals(string name, int year, float price, int countOfAnimals) : Cartoon(name, year)
-	{
-		this->price = price;
-		this->countOfAnimals = countOfAnimals;
-	}
-
-	void PrintInfoCartoonAboutAnim() {
-		PrintInfoCartoon();
-		cout << "Price: " << price << endl;
-		cout << "Number of animals: " << countOfAnimals << endl;
-	}
-
-	~CartoonAboutAnimals() {
-
-	}
-
-protected:
-	float price;
-	int countOfAnimals;
-};
-
-class CartoonAboutAnimalsAndPeople : protected CartoonAboutAnimals
-{
-public:
-	CartoonAboutAnimalsAndPeople(string name, int year, float price, int countOfAnimals, string mainHeroName, int countOfPeople) : CartoonAboutAnimals(name, year, price, countOfAnimals)
-	{
-		this->countOfPeople = countOfPeople;
-		this->mainHeroName = mainHeroName;
-	}
-
-	void PrintInfoCartoonAboutAnimAndPeop() {
-		PrintInfoCartoonAboutAnim();
-		cout << "Name of main hero: " << mainHeroName << endl;
-		cout << "Number of people: " << countOfPeople << endl;
-	}
-
-	~CartoonAboutAnimalsAndPeople() {
-
-	}
-
-protected:
-	string mainHeroName;
-	int countOfPeople;
-};
-
-class Anime : protected CartoonAboutAnimalsAndPeople, protected Serial
-{
-public:
-	Anime(string name, int year, int countOfHero, float length, string author, float seriesNum, float price, int countOfAnimals, string mainHeroName, int countOfPeople, string genre, int ageLimit)
-		:Serial(name, year, countOfHero, length, author, seriesNum), CartoonAboutAnimalsAndPeople(name, year, price, countOfAnimals, mainHeroName, countOfPeople), Cartoon(name, year)
-	{
-		this->ageLimit = ageLimit;
-		this->genre = genre;
-	}
-
-	void PrintInfoPaladin() {
-		PrintInfoSerial();
-		cout << "Price: " << price << endl;
-		cout << "Number of animals: " << countOfAnimals << endl;
-		cout << "Name of main hero: " << mainHeroName << endl;
-		cout << "Number of people: " << countOfPeople << endl;
-		cout << "Genre: " << genre << endl;
-		cout << "Limit of Age: " << ageLimit << endl;
-	}
-
-	~Anime() {
-
-	}
+    void Print() {
+        std::cout << "Uravneniya: " << std::endl;
+        for (int i = 0; i < counter; i++) {
+            std::cout << dataA[i] << " * x^2 + " << dataB[i] << " * x + " << dataC[i] << " = 0" << std::endl;
+        }
+    }
 
 private:
-	string genre;
-	int ageLimit;
+    std::vector<T> dataA;
+    std::vector<T> dataB;
+    std::vector<T> dataC;
+    int counter = 0;
 };
 
-int GetValidInt(string);
-float GetValidFloat(string);
+template <>
+class Uravnenie<const char*> {
+public:
+    void Add(const char* a = "", const char* b = "", const char* c = "") {
+        dataA.push_back(a);
+        dataB.push_back(b);
+        dataC.push_back(c);
+        counter++;
+    }
+
+    void Del(const char* a, const char* b, const char* c) {
+        for (int i = 0; i < counter; i++) {
+            if (dataA[i] == a && dataB[i] == b && dataC[i] == c) {
+                dataA.erase(dataA.begin() + i);
+                dataB.erase(dataB.begin() + i);
+                dataC.erase(dataC.begin() + i);
+                counter--;
+                return;
+            }
+        }
+        std::cout << "Net takogo uravnenniya" << std::endl;
+    }
+
+    void Reshenie() {
+        double D, x1, x2;
+        double a;
+        double b;
+        double c;
+
+        std::cout << "Resheniya: " << std::endl;
+        for (int i = 0; i < counter; i++) {
+            std::cout << dataA[i] << " * x^2 + " << dataB[i] << " * x + " << dataC[i] << " = 0" << std::endl;
+            a = atoi(dataA[i]);
+            b = atoi(dataB[i]);
+            c = atoi(dataC[i]);
+
+            D = b * b - 4 * a * c;
+            if (D < 0) {
+                std::cout << "korney net" << std::endl;
+            }
+            else {
+                x1 = (-b - sqrt(D)) / (2 * a);
+                x2 = (-b + sqrt(D)) / (2 * a);
+                std::cout << "x1 = " << x1 << "; x2 = " << x2 << ";" << std::endl;
+            }
+        }
+    }
+
+    void Print() {
+        std::cout << "Uravneniya: " << std::endl;
+        for (int i = 0; i < counter; i++) {
+            std::cout << dataA[i] << " * x^2 + " << dataB[i] << " * x + " << dataC[i] << " = 0" << std::endl;
+        }
+    }
+
+private:
+    std::vector<const char*> dataA;
+    std::vector<const char*> dataB;
+    std::vector<const char*> dataC;
+    int counter = 0;
+};
 
 int main() {
-	SetConsoleCP(1251);
-	SetConsoleOutputCP(1251);
+    Uravnenie<int> test;
+    test.Add(1, 2, 4);
+    test.Add(3, 8, 4);
+    test.Add(1, 5, 12);
+    test.Print();
+    test.Del(1, 5, 12);
+    test.Reshenie();
 
-	string name, author, genre, mainHeroName;
-	int year, numOfAnimals, numOfPeople, countOfHero, ageLimit;
-	float price, length, seriesNum;
 
-	//info input
-	cout << "Name of Cartoon: ";
-	cin >> name;
-	cout << "Author: ";
-	cin >> author;
-	cout << "Genre: ";
-	cin >> genre;
-	cout << "Name of main hero: ";
-	cin >> mainHeroName;
-
-	year = GetValidInt("Year");
-	numOfAnimals = GetValidInt("Number of animals");
-	numOfPeople = GetValidInt("Number of people");
-	countOfHero = GetValidInt("Number of hero");
-	ageLimit = GetValidInt("Age limit");
-
-	price = GetValidFloat("Price");
-	seriesNum = GetValidFloat("Number of series");
-	length = GetValidFloat("Length");
-	
-	system("cls");
-	Anime* anime = new Anime(name, year, countOfHero, length, author, seriesNum, price, numOfAnimals, mainHeroName, numOfPeople, genre, ageLimit);
-
-	//info output
-	cout << "Info about Anime" << endl;
-	cout << "------------------" << endl;
-	(*anime).PrintInfoPaladin();
-	delete anime;
-	return 0;
+    Uravnenie<const char*> testChar;
+    testChar.Add("1", "2", "4");
+    testChar.Add("3", "8", "4");
+    testChar.Add("1", "5", "12");
+    testChar.Print();
+    testChar.Del("1", "2", "4");
+    testChar.Reshenie();
+    
+  
+    return 0;
 }
-
-int GetValidInt(string title) {
-	int temp;
-	cout << title << ": ";
-
-	while (true) {
-		cin >> temp;
-		if (cin.fail() || temp < 0) {
-			cin.clear();
-			cin.ignore(32767, '\n');
-			cout << title << ": ";
-		}
-		else {
-			cin.ignore(32767, '\n');
-			return temp;
-		}
-	}
-};
-
-float GetValidFloat(string title) {
-	float temp;
-	cout << title << ": ";
-
-	while (true) {
-		cin >> temp;
-		if (cin.fail() || temp < 0) {
-			cin.clear();
-			cin.ignore(32767, '\n');
-			cout << title << ": ";
-		}
-		else {
-			cin.ignore(32767, '\n');
-			return temp;
-		}
-	}
-};
