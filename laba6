@@ -1,0 +1,234 @@
+#include <iostream>
+#include <windows.h>
+
+using namespace std;
+
+class Cartoon
+{
+public:
+	Cartoon(string name, int year) {
+		this->name = name;
+		this->year = year;
+	}
+
+	Cartoon() {
+		year = 2000;
+		name = "default";
+	}
+
+	void PrintInfoCartoon() {
+		cout << "Name: " << name << endl;
+		cout << "Year: " << year << endl;
+	}
+
+	~Cartoon() {
+
+	}
+
+protected:
+	string name;
+	int year;
+};
+
+class fullLengthCartoon : protected virtual Cartoon
+{
+public:
+	fullLengthCartoon(string name, int year, int countOfHero, float length) : Cartoon(name, year)
+	{
+		this->length = length;
+		this->countOfHero = countOfHero;
+	}
+
+	void PrintInfoFLCartoon() {
+		PrintInfoCartoon();
+		cout << "Length: " << length << endl;
+		cout << "Number of hero: " << countOfHero << endl;
+	}
+
+	~fullLengthCartoon() {
+
+	}
+
+protected:
+	float length;
+	int countOfHero;
+};
+
+class Serial : protected fullLengthCartoon
+{
+public:
+	Serial(string name, int year, int countOfHero, float length, string author, float seriesNum) : fullLengthCartoon(name, year, countOfHero, length)
+	{
+		this->author = author;
+		this->seriesNum = seriesNum;
+	}
+
+	void PrintInfoSerial() {
+		PrintInfoFLCartoon();
+		cout << "Author: " << author << endl;
+		cout << "Number of series: " << seriesNum << endl;
+	}
+
+	~Serial() {
+
+	}
+
+protected:
+	string author;
+	float seriesNum;
+};
+
+class CartoonAboutAnimals : protected virtual Cartoon
+{
+public:
+	CartoonAboutAnimals(string name, int year, float price, int countOfAnimals) : Cartoon(name, year)
+	{
+		this->price = price;
+		this->countOfAnimals = countOfAnimals;
+	}
+
+	void PrintInfoCartoonAboutAnim() {
+		PrintInfoCartoon();
+		cout << "Price: " << price << endl;
+		cout << "Number of animals: " << countOfAnimals << endl;
+	}
+
+	~CartoonAboutAnimals() {
+
+	}
+
+protected:
+	float price;
+	int countOfAnimals;
+};
+
+class CartoonAboutAnimalsAndPeople : protected CartoonAboutAnimals
+{
+public:
+	CartoonAboutAnimalsAndPeople(string name, int year, float price, int countOfAnimals, string mainHeroName, int countOfPeople) : CartoonAboutAnimals(name, year, price, countOfAnimals)
+	{
+		this->countOfPeople = countOfPeople;
+		this->mainHeroName = mainHeroName;
+	}
+
+	void PrintInfoCartoonAboutAnimAndPeop() {
+		PrintInfoCartoonAboutAnim();
+		cout << "Name of main hero: " << mainHeroName << endl;
+		cout << "Number of people: " << countOfPeople << endl;
+	}
+
+	~CartoonAboutAnimalsAndPeople() {
+
+	}
+
+protected:
+	string mainHeroName;
+	int countOfPeople;
+};
+
+class Anime : protected CartoonAboutAnimalsAndPeople, protected Serial
+{
+public:
+	Anime(string name, int year, int countOfHero, float length, string author, float seriesNum, float price, int countOfAnimals, string mainHeroName, int countOfPeople, string genre, int ageLimit)
+		:Serial(name, year, countOfHero, length, author, seriesNum), CartoonAboutAnimalsAndPeople(name, year, price, countOfAnimals, mainHeroName, countOfPeople), Cartoon(name, year)
+	{
+		this->ageLimit = ageLimit;
+		this->genre = genre;
+	}
+
+	void PrintInfoPaladin() {
+		PrintInfoSerial();
+		cout << "Price: " << price << endl;
+		cout << "Number of animals: " << countOfAnimals << endl;
+		cout << "Name of main hero: " << mainHeroName << endl;
+		cout << "Number of people: " << countOfPeople << endl;
+		cout << "Genre: " << genre << endl;
+		cout << "Limit of Age: " << ageLimit << endl;
+	}
+
+	~Anime() {
+
+	}
+
+private:
+	string genre;
+	int ageLimit;
+};
+
+int GetValidInt(string);
+float GetValidFloat(string);
+
+int main() {
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+
+	string name, author, genre, mainHeroName;
+	int year, numOfAnimals, numOfPeople, countOfHero, ageLimit;
+	float price, length, seriesNum;
+
+	//info input
+	cout << "Name of Cartoon: ";
+	cin >> name;
+	cout << "Author: ";
+	cin >> author;
+	cout << "Genre: ";
+	cin >> genre;
+	cout << "Name of main hero: ";
+	cin >> mainHeroName;
+
+	year = GetValidInt("Year");
+	numOfAnimals = GetValidInt("Number of animals");
+	numOfPeople = GetValidInt("Number of people");
+	countOfHero = GetValidInt("Number of hero");
+	ageLimit = GetValidInt("Age limit");
+
+	price = GetValidFloat("Price");
+	seriesNum = GetValidFloat("Number of series");
+	length = GetValidFloat("Length");
+	
+	system("cls");
+	Anime* anime = new Anime(name, year, countOfHero, length, author, seriesNum, price, numOfAnimals, mainHeroName, numOfPeople, genre, ageLimit);
+
+	//info output
+	cout << "Info about Anime" << endl;
+	cout << "------------------" << endl;
+	(*anime).PrintInfoPaladin();
+	delete anime;
+	return 0;
+}
+
+int GetValidInt(string title) {
+	int temp;
+	cout << title << ": ";
+
+	while (true) {
+		cin >> temp;
+		if (cin.fail() || temp < 0) {
+			cin.clear();
+			cin.ignore(32767, '\n');
+			cout << title << ": ";
+		}
+		else {
+			cin.ignore(32767, '\n');
+			return temp;
+		}
+	}
+};
+
+float GetValidFloat(string title) {
+	float temp;
+	cout << title << ": ";
+
+	while (true) {
+		cin >> temp;
+		if (cin.fail() || temp < 0) {
+			cin.clear();
+			cin.ignore(32767, '\n');
+			cout << title << ": ";
+		}
+		else {
+			cin.ignore(32767, '\n');
+			return temp;
+		}
+	}
+};
