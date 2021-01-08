@@ -1,0 +1,857 @@
+#pragma once
+
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+class Toy {
+private:
+	string name;
+	int amount;
+	int price;
+	int rest;
+public:
+	Toy() {
+		this->name = " ";
+		this->amount = 10;
+		this->price = 10;
+		this->rest = 10;
+	}
+	Toy(string name,int amount,int price,int rest) {
+		this->name = name;
+		this->amount = amount;
+		this->price = price;
+		this->rest = rest;
+	}
+	friend ostream& operator<<(ostream& out, const Toy& art);
+	friend istream& operator>>(istream& in, Toy& art);
+	friend bool operator==(const Toy num1, const Toy num2);
+
+	string get_name();
+	int get_amount();
+	int get_price();
+	int get_rest();
+
+	void set_name(string);
+	void set_amount(int);
+	void set_price(int);
+	void set_rest(int);
+
+
+	friend bool operator<(const Toy t1, const Toy t2);
+	friend bool operator>(const Toy t1, const Toy t2);
+};
+#include "Toy.h"
+#include "Exception.h"
+
+ostream& operator<<(ostream& out, const Toy& toy)
+{
+	try {
+		if (toy.name == " ")
+		{
+			throw 2;
+		}
+	}
+	catch (int i)
+	{
+		Exception ex(i);
+		ex.Print();
+	}
+	out << toy.name << " " << toy.amount << " " << toy.price <<" "<<toy.rest<< endl;
+	return out;
+}
+
+istream& operator>>(istream& in, Toy& toy)
+{
+	in >> toy.name;
+	in >> toy.amount;
+	in >> toy.price;
+	in >> toy.rest;
+	return in;
+}
+
+bool operator==(Toy num1, Toy num2) {
+	if (num1.get_name() == num2.get_name() && num1.get_amount() == num2.get_amount() && num1.get_price() == num2.get_price() &&
+		num1.get_rest() == num2.get_rest()) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+
+string Toy::get_name() {
+	return this->name;
+}
+int Toy::get_amount() {
+	return this->amount;
+}
+int Toy::get_price() {
+	return this->price;
+}
+int Toy::get_rest() {
+	return this->rest;
+}
+
+void Toy::set_name(string temp) {
+	this->name = temp;
+}
+void Toy::set_amount(int temp) {
+	this->amount = temp;
+}
+void Toy::set_price(int temp) {
+	this->price = temp;
+}
+void Toy::set_rest(int temp) {
+	this->rest = temp;
+}
+
+	bool operator >(const Toy a, const Toy b)
+	{
+		if (a.rest > b.rest)
+			return true;
+		else
+			return false;
+	}
+
+	bool operator <(const Toy a, const Toy b)
+	{
+		if (a.rest < b.rest)
+			return true;
+		else
+			return false;
+	}
+  #pragma once
+#include <iostream>
+#include <fstream>
+#include <string>
+
+
+using namespace std;
+class Exception
+{
+protected:
+	int error;
+public:
+	Exception() :error(0) {}
+	Exception(int error)
+	{
+		this->error = error;
+	}
+	~Exception() { };
+
+
+	void Print()
+	{
+		switch (error)
+		{
+		case 1: cout << "File isn't open!" << endl;
+			break;
+		case 2: cout << "The class is empty!" << endl;
+			break;
+		}
+	}
+};
+pragma once
+#include <iostream>
+#include <string>
+#include <fstream>
+#include "Ring.h"
+#include "Toy.h"
+#include "Exception.h"
+
+using namespace std;
+
+enum Key {
+	none = 0,
+	txt,
+	bin
+};
+
+class File
+{
+private:
+	fstream file;
+	string path;
+	Key key; //none txt bin
+	int size;
+public:
+	File() :path("Space"), key(none), size(0) {}
+	File(string path, Key key) {
+		this->path = path;
+		this->key = key;
+		this->size = 0;
+	}
+	~File() { file.close(); }
+	void open(string mode) {
+		switch (key) {
+		case txt: {
+			if (mode == "r") {
+				file.open(path, ios_base::in);
+			}
+			else if (mode == "add") {
+				file.open(path, ios_base::app);
+			}
+			else if (mode == "w") {
+				file.open(path, ios_base::out);
+			}
+			else if (mode == "wr") {
+				file.open(path, ios_base::in | ios_base::out);
+			}
+		}
+				break;
+		case bin: {
+			if (mode == "r") {
+				file.open(path, ios_base::binary | ios_base::in);
+			}
+			else if (mode == "add") {
+				file.open(path, ios_base::binary | ios_base::app);
+			}
+			else if (mode == "w") {
+				file.open(path, ios_base::binary | ios_base::out);
+			}
+			else if (mode == "wr") {
+				file.open(path, ios_base::binary | ios_base::in | ios_base::out);
+			}
+		}
+				break;
+		}
+		try {
+			if (!file.is_open())
+			{
+				throw 1;
+			}
+		}
+		catch (int i)
+		{
+			Exception ex(i);
+			ex.Print();
+			exit(-1);
+			return;
+		}
+	}
+	void close() {
+		file.close();
+	}
+	void begin() {
+		file.seekg(0, ios_base::beg);
+	}
+	void set_size(int s) {
+		size = s;
+	}
+	int get_size() {
+		return	size;
+	}
+	void sort_name()
+	{
+		string temp;
+		string j1, j2;
+		int pos;
+		this->open("wr");
+		try {
+			if (!file.is_open())
+			{
+				throw 1;
+			}
+		}
+		catch (int i)
+		{
+			Exception ex(i);
+			ex.Print();
+			return;
+		}
+		for (int i = 0; i < this->size - 1; i++) {
+			for (int j = 0; j < this->size - i - 1; j++) {
+				this->file.seekg(0, ios_base::beg);
+				for (int k = 0; k < j; k++) {
+					std::getline(this->file, j1);
+				}
+				std::getline(this->file, j1, ' ');
+				std::getline(this->file, j2);
+				std::getline(this->file, j2, ' ');
+				if (j1 > j2) {
+					this->file.seekg(0, ios_base::beg);
+					pos = this->file.tellg();
+					for (int k = 0; k <= j; k++) {
+						std::getline(this->file, j1);
+						pos = this->file.tellg();
+					}
+					temp = j1;
+					std::getline(this->file, j2);
+					this->file.seekg(0, ios_base::beg);
+					for (int k = 0; k < j; k++) {
+						std::getline(this->file, j1);
+					}
+					pos = this->file.tellg();
+					this->file.seekg(pos, ios_base::beg);
+					this->file << j2 << '\n';
+					this->file << temp << '\n';
+				}
+			}
+		}
+		this->close();
+	}
+	void sort_amount()
+	{
+		string temp;
+		string j1, j2;
+		int i1, i2;
+		int pos;
+		this->open("wr");
+		try {
+			if (!file.is_open())
+			{
+				throw 1;
+			}
+		}
+		catch (int i)
+		{
+			Exception ex(i);
+			ex.Print();
+			return;
+		}
+		for (int i = 0; i < this->size - 1; i++) {
+			for (int j = 0; j < this->size - i - 1; j++) {
+				this->file.seekg(0, ios_base::beg);
+				for (int k = 0; k < j; k++) {
+					getline(this->file, j1);
+				}
+				getline(this->file, j1, ' ');
+				getline(this->file, j1, ' ');
+				getline(this->file, j2);
+				getline(this->file, j2, ' ');
+				getline(this->file, j2, ' ');
+				i1 = stoi(j1);
+				i2 = stoi(j2);
+				if (i1 > i2) {
+					this->file.seekg(0, ios_base::beg);
+					pos = this->file.tellg();
+					for (int k = 0; k <= j; k++) {
+						getline(this->file, j1);
+						pos = this->file.tellg();
+					}
+					temp = j1;
+					getline(this->file, j2);
+					this->file.seekg(0, ios_base::beg);
+					for (int k = 0; k < j; k++) {
+						getline(this->file, j1);
+					}
+					pos = this->file.tellg();
+					this->file.seekg(pos, ios_base::beg);
+					this->file << j2 << '\n';
+					this->file << temp << '\n';
+				}
+			}
+		}
+		this->close();
+	}
+
+	void sort_price()
+	{
+		string temp;
+		string j1, j2;
+		int i1, i2;
+		int pos;
+		this->open("wr");
+		try {
+			if (!file.is_open())
+			{
+				throw 1;
+			}
+		}
+		catch (int i)
+		{
+			Exception ex(i);
+			ex.Print();
+			return;
+		}
+		for (int i = 0; i < this->size - 1; i++) {
+			for (int j = 0; j < this->size - i - 1; j++) {
+				this->file.seekg(0, ios_base::beg);
+				for (int k = 0; k < j; k++) {
+					getline(this->file, j1);
+				}
+				getline(this->file, j1, ' ');
+				getline(this->file, j1, ' ');
+				getline(this->file, j1, ' ');
+				getline(this->file, j2);
+				getline(this->file, j2, ' ');
+				getline(this->file, j2, ' ');
+				getline(this->file, j2, ' ');
+				i1 = stoi(j1);
+				i2 = stoi(j2);
+				if (i1 > i2) {
+					this->file.seekg(0, ios_base::beg);
+					pos = this->file.tellg();
+					for (int k = 0; k <= j; k++) {
+						getline(this->file, j1);
+						pos = this->file.tellg();
+					}
+					temp = j1;
+					getline(this->file, j2);
+					this->file.seekg(0, ios_base::beg);
+					for (int k = 0; k < j; k++) {
+						getline(this->file, j1);
+					}
+					pos = this->file.tellg();
+					this->file.seekg(pos, ios_base::beg);
+					this->file << j2 << '\n';
+					this->file << temp << '\n';
+				}
+			}
+		}
+		this->close();
+	}
+
+	void edit(int line, Toy[]);
+
+	Toy return_art() {
+		string str;
+		int i1;
+		Toy art;
+
+		std::getline(this->file, str, ' ');
+		art.set_name(str);
+		std::getline(this->file, str, ' ');
+		i1 = stoi(str);
+		art.set_amount(i1);
+		std::getline(this->file, str, ' ');
+		i1 = stoi(str);
+		art.set_price(i1);
+		std::getline(this->file, str, ' ');
+		i1 = stoi(str);
+		art.set_rest(i1);
+		return art;
+	}
+	friend File& operator<<(File& file, Toy& art);
+	friend File& operator<<(File& file, const char* s);
+	friend ostream& operator<<(ostream& out, File& file);
+
+
+	Toy read();
+};
+#include "File.h"
+#include "Toy.h"
+#include "Exception.h"
+
+File& operator<<(File& file, const char* s)
+{
+	try {
+		if (!file.file.is_open())
+		{
+			throw 1;
+		}
+	}
+	catch (int i)
+	{
+		Exception ex(i);
+		ex.Print();
+	}
+	string str = s;
+	file.file << str;
+	return file;
+}
+
+fstream& operator<<(fstream& out, Toy& toy) {
+	try {
+		if (!out.is_open())
+		{
+			throw 1;
+		}
+	}
+	catch (int i)
+	{
+		Exception ex(i);
+		ex.Print();
+	}
+	int a = out.tellg();
+	string art_name = toy.get_name();
+	size_t len1 = art_name.length() + 1;
+
+	int amount = toy.get_amount();
+	int price = toy.get_price();
+	int rest = toy.get_rest();
+
+	out.write((char*)(&len1), sizeof(len1));
+	out.write((char*)(art_name.c_str()), len1);
+
+	out.write((char*)(&amount), sizeof(amount));
+	out.write((char*)(&price), sizeof(price));
+	out.write((char*)(&rest), sizeof(rest));
+
+
+	return out;
+}
+
+File& operator<<(File& file, Toy& toy)
+{
+	int pos = 0, a = 0, size = 0;
+	try {
+		if (!file.file.is_open())
+		{
+			throw 1;
+		}
+	}
+	catch (int i)
+	{
+		Exception ex(i);
+		ex.Print();
+	}
+	if (file.key == txt) {
+		file.file << toy.get_name() << " " << toy.get_amount() << " " << toy.get_price() << " " << toy.get_rest() <<  endl;
+	}
+	else if (file.key == bin) {
+		string name = toy.get_name();
+		size_t len1 = name.length() + 1;
+
+		int amount = toy.get_amount();
+		int price = toy.get_price();
+		int rest = toy.get_rest();
+
+
+		file.file.write((char*)(&len1), sizeof(len1));
+		file.file.write((char*)(name.c_str()), len1);
+
+		
+		file.file.write((char*)(&amount), sizeof(amount));
+		file.file.write((char*)(&price), sizeof(price));
+		file.file.write((char*)(&rest), sizeof(rest));
+
+		
+	}
+	return file;
+}
+
+Toy File::read()
+{
+	string str;
+	Toy t;
+	getline(this->file, str, ' ');
+	t.set_name(str);
+	getline(this->file, str, ' ');
+	t.set_amount(stoi(str));
+	getline(this->file, str, ' ');
+	t.set_price(stoi(str));
+	getline(this->file, str);
+	t.set_rest(stoi(str));
+	return t;
+}
+
+ostream& operator<<(ostream& out, File& file)
+{
+	int a = 0;
+	try {
+		if (!file.file.is_open())
+		{
+			throw 1;
+		}
+	}
+	catch (int i)
+	{
+		Exception ex(i);
+		ex.Print();
+	}
+	if (file.key == txt) {
+		string str;
+		while (!file.file.eof()) {
+			std::getline(file.file, str);
+			a = file.file.tellg();
+			cout << str << endl;
+		}
+	}
+	else if (file.key == bin) {
+		int i = 0;
+		int size = 0, step = 0;
+		while (i < file.size) {
+			int amount;
+			int price;
+			int rest;
+
+			size_t len;
+
+			file.file.read((char*)(&len), sizeof(len));
+			char* name = new char[len];
+
+			file.file.read((char*)(name), len);
+			name[len - 1] = '\0';
+
+			file.file.read((char*)(&amount), sizeof(int));
+			file.file.read((char*)(&price), sizeof(int));
+			file.file.read((char*)(&rest), sizeof(int));
+
+
+			cout << name << " " << amount << " " << price << " " << rest << endl;
+
+			delete[] name;
+			i++;
+
+		}
+	}
+	return out;
+}
+
+
+
+void File::edit(int line, Toy ms[])
+{
+	this->open("wr");
+
+	int a, b;
+
+	try {
+		if (!file.is_open())
+		{
+			throw 1;
+		}
+	}
+	catch (int i)
+	{
+		Exception ex(i);
+		ex.Print();
+		return;
+	}
+	Toy tmp;
+	if (this->key == txt) {
+		string temp;
+		for (int i = 0; i < line - 1; i++) {
+			std::getline(this->file, temp);
+		}
+		std::getline(this->file, temp, ' ');
+		tmp.set_name(temp);
+		std::getline(this->file, temp, ' ');
+		tmp.set_amount(stoi(temp));
+		std::getline(this->file, temp, ' ');
+		tmp.set_price(stoi(temp));
+		std::getline(this->file, temp, ' ');
+		tmp.set_rest(stoi(temp));
+	}
+	else if (this->key == bin) {
+		size_t len;
+		for (int i = 0; i < line; i++) {
+			this->file.read((char*)(&len), sizeof(len));
+			char* n = new char[len];
+			string name;
+			int amount = 0;
+			int price = 0;
+			int rest = 0;
+
+			this->file.read((char*)(n), len);
+			name = n;
+			name[len - 1] = '\0';
+			this->file.read((char*)(&amount), sizeof(int));
+			this->file.read((char*)(&price), sizeof(int));
+			this->file.read((char*)(&rest), sizeof(int));
+
+			this->file.read((char*)(&len), sizeof(len));
+			this->file.read((char*)(n), len);
+
+			tmp.set_name(name);
+			tmp.set_amount(amount);
+			tmp.set_price(price);
+			tmp.set_rest(rest);
+		}
+		a = file.tellg();
+	}
+
+	cout << "What do you want to change?\n1 - name\n2-amount\n3-price\n4-restriction" << endl;
+	int choice;
+	cin >> choice;
+	cout << "Put new data: ";
+	switch (choice) {
+	case 1: {
+		string a;
+		rewind(stdin);
+		cin >> a;
+		tmp.set_name(a);
+		break;
+	}
+	case 2: {
+		int a;
+		cin >> a;
+		tmp.set_amount(a);
+		break;
+	}
+	case 3: {
+		int a;
+		cin >> a;
+		tmp.set_price(a);
+		break;
+	}
+	case 4: {
+		int a;
+		cin >> a;
+		tmp.set_rest(a);
+		break;
+	}
+
+		  a = file.tellg();
+		  file.seekg(0, ios_base::end);
+		  b = file.tellg();
+		  this->file.seekg(0, ios_base::beg);
+		  if (this->key == txt) {
+			  string temp;
+			  for (int i = 0; i < line - 1; i++) {
+				  getline(this->file, temp);
+			  }
+			  int pos = this->file.tellg();
+			  this->file.seekg(pos, ios_base::beg);
+			  this->file << tmp;
+			  return;
+		  }
+		  else if (this->key == bin) {
+			  for (int i = 0; i < line - 1; i++) {
+
+				  size_t len;
+				  this->file.read((char*)(&len), sizeof(len));
+				  char* n = new char[len];
+				  string name;
+				  int amount = 0;
+				  int price = 0;
+				  int rest = 0;
+				  this->file.read((char*)(n), len);
+				  name = n;
+				  name[len] = '\0';
+				  this->file.read((char*)(&amount), sizeof(int));
+				  this->file.read((char*)(&price), sizeof(int));
+				  this->file.read((char*)(&rest), sizeof(int));
+				  this->file.read((char*)(n), len);
+
+				  this->file.read((char*)(&len), sizeof(len));
+				  this->file.read((char*)(&n), len);
+
+				  delete[]n;
+			  }
+			  int pos = this->file.tellg();
+
+			  char* last = new char[b - a];
+			  this->file.read((char*)last, b - a);
+
+			  this->close();
+			  this->open("w");
+			  pos = this->file.tellg();
+			  file << tmp;
+			  for (int i = 0; i < get_size(); i++) {
+				  if (i != line - 1)
+					  file << ms[i];
+				  else {
+					  ms[i].set_name(tmp.get_name());
+					  ms[i].set_amount(tmp.get_amount());
+					  ms[i].set_price(tmp.get_price());
+					  ms[i].set_rest(tmp.get_rest());
+
+				  }
+			  }
+		  }
+
+		  this->close();
+	}
+}
+#include <iostream>
+#include <fstream>
+#include <string>
+
+
+#include "File.h"
+#include "Toy.h"
+#include "Ring.h"
+
+using namespace std;
+
+
+
+int main()
+{
+    Toy u1("Sponge", 15, 10, 5);
+    Toy u2("Rick", 10, 20, 10);
+    Toy u3("Morty", 30, 28, 8);
+    Toy u4("Batman", 2, 23, 1);
+    Toy flg[4] = { u1,u2,u3,u4 };
+    File f1("1.txt", txt);
+    f1.open("w");
+    f1.set_size(4);
+    f1 << u1;
+    f1 << u2;
+    f1 << u3;
+    f1 << u4;
+    f1.close();
+    f1.open("r");
+    cout << f1;
+    f1.close();
+    cout << "\n\n";
+    File f2("2.txt", bin);
+    f2.open("w");
+    f2.set_size(4);
+    f2 << u1;
+    f2 << u2;
+    f2 << u3;
+    f2 << u4;
+    f2.close();
+    f2.open("r");
+    cout << f2;
+    f2.close();
+    cout << "\n\n";
+    File f3("3.bin", bin);
+    f3.open("w");
+    f3.set_size(4);
+    f3 << u1;
+    f3 << u2;
+    f3 << u3;
+    f3 << u4;
+    f3.close();
+    f3.open("r");
+    cout << f3;
+    f3.close();
+    cout << "\n\n";
+
+    cout << "Sort by name:" << endl;
+    f1.sort_name();
+    f1.open("r");
+    cout << f1;
+    f1.close();
+
+    cout << "Sort by amount:" << endl;
+    f1.sort_amount();
+    f1.open("r");
+    cout << f1;
+    f1.close();
+
+    cout << "Sort by price :" << endl;
+    f1.sort_price();
+    f1.open("r");
+    cout << f1;
+    f1.close();
+
+  /*  Ring a;
+    f1.open("r");
+    Toy t;
+    for (int i = 0; i < f1.get_size(); i++)
+    {
+        t = f1.read();
+        a.push(t);
+    }
+    cout << endl << endl;
+    a.show();
+    Iterator I(&a);
+    cout << endl << endl;
+    I.ShellSort();
+    a.show();
+   
+*/
+
+    /*int i = 0, line = 0;
+    do {
+        cout << "Enter the line that you want to change:" << endl;
+        cin >> line;
+        f2.edit(line, flg);
+        f2.open("r");
+        cout << "\n--------------------------------------------------------\n";
+        cout << f2;
+        f2.close();
+        cout << "Do you want to change anything else?\n1 - yes\n0 - no" << endl;
+        rewind(stdin);
+        cin >> i;
+    } while (i);*/
+    return 0;
+}
